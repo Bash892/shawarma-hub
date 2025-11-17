@@ -14,6 +14,14 @@ const CartPage = () => {
   const [loadingCheckout, setLoadingCheckout] = useState(false);
   const [error, setError] = useState(null);
 
+  // ✅ new: delivery details state
+  const [deliveryDetails, setDeliveryDetails] = useState({
+    phone: '',
+    address: '',
+    notes: '',
+    allergies: '',
+  });
+
   // Load cart from localStorage
   useEffect(() => {
     const saved = localStorage.getItem(CART_KEY);
@@ -66,6 +74,15 @@ const CartPage = () => {
     localStorage.removeItem(CART_KEY);
   };
 
+  // ✅ new: handle delivery form changes
+  const handleChangeDeliveryField = (e) => {
+    const { name, value } = e.target;
+    setDeliveryDetails((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const handleCheckout = async () => {
     if (!cart.length) return;
     if (!token) {
@@ -73,8 +90,18 @@ const CartPage = () => {
       return;
     }
 
-    setLoadingCheckout(true);
+    // reset error
     setError(null);
+
+    // ✅ validate delivery details if delivery
+    if (orderType === 'delivery') {
+      if (!deliveryDetails.phone.trim() || !deliveryDetails.address.trim()) {
+        setError('Please enter your phone number and delivery address.');
+        return;
+      }
+    }
+
+    setLoadingCheckout(true);
 
     try {
       const items = cart.map((item) => ({
@@ -82,16 +109,32 @@ const CartPage = () => {
         quantity: item.quantity,
       }));
 
+      const payload = {
+        items,
+        type: orderType,
+      };
+
+      // ✅ include deliveryDetails for delivery orders
+      if (orderType === 'delivery') {
+        payload.deliveryDetails = {
+          phone: deliveryDetails.phone.trim(),
+          address: deliveryDetails.address.trim(),
+          notes: deliveryDetails.notes.trim(),
+          allergies: deliveryDetails.allergies.trim(),
+        };
+      }
+
       const data = await apiFetch(
         '/api/payments/create-checkout-session',
         {
           method: 'POST',
-          body: JSON.stringify({ items, type: orderType }),
+          body: JSON.stringify(payload),
         },
         token
       );
 
       if (data.url) {
+        // don't clear cart here; we clear it on success page
         window.location.href = data.url;
       } else {
         throw new Error('No checkout URL returned from server.');
@@ -194,10 +237,9 @@ const CartPage = () => {
             <span>${total.toFixed(2)}</span>
           </div>
 
+          {/* Order type toggle */}
           <div className="mt-4 mb-3">
-            <p className="text-xs text-slate-400 mb-1">
-              Order type
-            </p>
+            <p className="text-xs text-slate-400 mb-1">Order type</p>
             <div className="inline-flex rounded-full bg-slate-800 p-1 text-xs">
               <button
                 type="button"
@@ -225,6 +267,60 @@ const CartPage = () => {
               </button>
             </div>
           </div>
+
+          {/* ✅ Delivery form vs Pickup info */}
+          {orderType === 'delivery' ? (
+            <div className="space-y-2 mb-4">
+              <p className="text-xs text-slate-400 mb-1">Delivery details</p>
+
+              <input
+                type="text"
+                name="phone"
+                value={deliveryDetails.phone}
+                onChange={handleChangeDeliveryField}
+                className="w-full mb-2 rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-xs focus:outline-none focus:border-red-500"
+                placeholder="Phone number"
+              />
+
+              <textarea
+                name="address"
+                value={deliveryDetails.address}
+                onChange={handleChangeDeliveryField}
+                rows={2}
+                className="w-full mb-2 rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-xs focus:outline-none focus:border-red-500"
+                placeholder="Delivery address"
+              />
+
+              <input
+                type="text"
+                name="notes"
+                value={deliveryDetails.notes}
+                onChange={handleChangeDeliveryField}
+                className="w-full mb-2 rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-xs focus:outline-none focus:border-red-500"
+                placeholder="Delivery notes (optional)"
+              />
+
+              <input
+                type="text"
+                name="allergies"
+                value={deliveryDetails.allergies}
+                onChange={handleChangeDeliveryField}
+                className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-xs focus:outline-none focus:border-red-500"
+                placeholder="Allergies (optional)"
+              />
+            </div>
+          ) : (
+            <div className="mb-4 rounded-xl bg-slate-950 border border-slate-800 p-3">
+              <p className="text-xs text-slate-400 mb-1">Pickup location</p>
+              <p className="text-sm text-slate-100 font-medium">Tasty Bites</p>
+              <p className="text-xs text-slate-300">
+                403 Main St, Grambling, LA 71245
+              </p>
+              <p className="mt-1 text-[11px] text-slate-500">
+                Show this address at pickup. Have your order number ready.
+              </p>
+            </div>
+          )}
 
           {error && (
             <div className="mb-3 rounded-lg bg-red-900/40 border border-red-700 px-3 py-2 text-xs text-red-100">

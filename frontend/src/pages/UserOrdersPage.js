@@ -26,7 +26,7 @@ const UserOrdersPage = () => {
       setLoading(true);
       try {
         const data = await apiFetch('/api/orders/my', {}, token);
-        setOrders(data);
+        setOrders(data || []);
       } catch (err) {
         console.error('Failed to fetch orders', err);
       } finally {
@@ -86,6 +86,7 @@ const UserOrdersPage = () => {
                 </div>
               </div>
 
+              {/* Items */}
               <div className="border-t border-slate-800 pt-3">
                 <p className="text-xs text-slate-400 mb-1">Items</p>
                 <ul className="space-y-1 text-xs">
@@ -103,6 +104,46 @@ const UserOrdersPage = () => {
                   ))}
                 </ul>
               </div>
+
+              {/* Delivery vs Pickup info */}
+              {order.type === 'delivery' ? (
+                <div className="mt-3 border-t border-slate-800 pt-3">
+                  <p className="text-xs text-slate-400 mb-1">
+                    Delivery details
+                  </p>
+                  <p className="text-xs text-slate-200">
+                    📞 {order.deliveryDetails?.phone || 'N/A'}
+                  </p>
+                  <p className="text-xs text-slate-200">
+                    📍 {order.deliveryDetails?.address || 'No address provided'}
+                  </p>
+                  {order.deliveryDetails?.notes && (
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      Notes: {order.deliveryDetails.notes}
+                    </p>
+                  )}
+                  {order.deliveryDetails?.allergies && (
+                    <p className="text-[11px] text-amber-300 mt-1">
+                      Allergies: {order.deliveryDetails.allergies}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <div className="mt-3 border-t border-slate-800 pt-3">
+                  <p className="text-xs text-slate-400 mb-1">
+                    Pickup location
+                  </p>
+                  <p className="text-xs text-slate-200">
+                    Tasty Bites
+                  </p>
+                  <p className="text-xs text-slate-300">
+                    403 Main St, Grambling, LA 71245
+                  </p>
+                  <p className="mt-1 text-[11px] text-slate-500">
+                    Please arrive on time and have your order number ready.
+                  </p>
+                </div>
+              )}
             </div>
           ))}
         </div>

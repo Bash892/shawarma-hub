@@ -7,9 +7,10 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 // POST /api/payments/create-checkout-session  (user)
 const createCheckoutSession = async (req, res) => {
   try {
-    const { items, type } = req.body;
+    const { items, type, deliveryDetails } = req.body;
     // items: [{ foodItemId, quantity }]
     // type: 'delivery' | 'pickup'
+    // deliveryDetails: { phone, address, notes, allergies } (for delivery)
 
     if (!items || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ message: 'Cart is empty' });
@@ -17,6 +18,19 @@ const createCheckoutSession = async (req, res) => {
 
     if (!['delivery', 'pickup'].includes(type)) {
       return res.status(400).json({ message: 'Invalid order type' });
+    }
+
+    // (Optional) backend validation for delivery
+    if (type === 'delivery') {
+      if (
+        !deliveryDetails ||
+        !deliveryDetails.phone?.trim() ||
+        !deliveryDetails.address?.trim()
+      ) {
+        return res
+          .status(400)
+          .json({ message: 'Phone number and address are required for delivery.' });
+      }
     }
 
     // Fetch food items from DB to ensure prices are trusted
@@ -72,6 +86,17 @@ const createCheckoutSession = async (req, res) => {
       type,
       status: 'pending',
       stripeSessionId: session.id,
+
+      // ✅ NEW: save delivery details only for delivery orders
+      deliveryDetails:
+        type === 'delivery'
+          ? {
+              phone: deliveryDetails?.phone || '',
+              address: deliveryDetails?.address || '',
+              notes: deliveryDetails?.notes || '',
+              allergies: deliveryDetails?.allergies || '',
+            }
+          : undefined,
     });
 
     res.json({

@@ -98,6 +98,9 @@ const AdminOrdersPage = () => {
                     {order.user?.email}
                   </p>
                   <p className="text-[11px] text-slate-500">
+                    📞 {order.deliveryDetails?.phone || 'No phone on file'}
+                  </p>
+                  <p className="text-[11px] text-slate-500">
                     {order.createdAt
                       ? new Date(order.createdAt).toLocaleString()
                       : ''}

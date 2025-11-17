@@ -19,6 +19,12 @@ const orderSchema = new mongoose.Schema(
       enum: ['delivery', 'pickup'],
       required: true,
     },
+    deliveryDetails: {
+      phone: { type: String },
+      address: { type: String },
+      notes: { type: String },
+      allergies: { type: String },
+    },
     status: {
       type: String,
       enum: ['pending', 'paid', 'preparing', 'completed', 'cancelled'],
