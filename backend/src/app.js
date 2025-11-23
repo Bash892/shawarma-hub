@@ -34,7 +34,7 @@ app.use('/api/payments', paymentRoutes);
 
 // Simple health check
 app.get('/', (req, res) => {
-  res.json({ message: 'Tasty Bites API is running' });
+  res.json({ message: 'Shawarma Hub API is running' });
 });
 
 module.exports = app;

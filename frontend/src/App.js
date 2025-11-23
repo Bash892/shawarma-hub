@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -19,11 +19,14 @@ import AdminWorkersPage from './pages/AdminWorkersPage';
 import PaymentSuccessPage from './pages/PaymentSuccessPage';
 import PaymentCancelledPage from './pages/PaymentCancelledPage';
 
-const App = () => {
+const AppContent = () => {
+  const location = useLocation();
+  const hideNavBar = location.pathname === '/user/menu';
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <NavBar />
-      <main className="max-w-6xl mx-auto px-4 py-6">
+    <div className="min-h-screen bg-white">
+      {!hideNavBar && <NavBar />}
+      <main className={hideNavBar ? '' : 'w-full'}>
         <Routes>
           <Route path="/" element={<LandingPage />} />
 
@@ -99,6 +102,12 @@ const App = () => {
         </Routes>
       </main>
     </div>
+  );
+};
+
+const App = () => {
+  return (
+    <AppContent />
   );
 };
 

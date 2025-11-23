@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const RegisterPage = () => {
@@ -28,47 +28,67 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center bg-slate-950 text-slate-100 px-4">
-      <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-lg">
-        <h2 className="text-xl font-semibold mb-4 text-center">Create Customer Account</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12 w-full">
+      <div className="w-full max-w-md bg-white border border-gray-200 rounded-2xl p-8 shadow-lg">
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-orange-500 mb-4">
+            <span className="text-white font-bold text-2xl">SH</span>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Create Account</h2>
+          <p className="text-sm text-gray-600">Join Shawarma Hub today</p>
+        </div>
         <form onSubmit={onSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm mb-1">Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
             <input
               name="name"
               value={form.name}
               onChange={onChange}
-              className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm focus:outline-none focus:border-red-500"
+              className="w-full rounded-lg bg-gray-50 border border-gray-200 px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              placeholder="Enter your name"
             />
           </div>
           <div>
-            <label className="block text-sm mb-1">Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
             <input
               name="email"
+              type="email"
               value={form.email}
               onChange={onChange}
-              className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm focus:outline-none focus:border-red-500"
+              className="w-full rounded-lg bg-gray-50 border border-gray-200 px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              placeholder="Enter your email"
             />
           </div>
           <div>
-            <label className="block text-sm mb-1">Password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
             <input
               type="password"
               name="password"
               value={form.password}
               onChange={onChange}
-              className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-sm focus:outline-none focus:border-red-500"
+              className="w-full rounded-lg bg-gray-50 border border-gray-200 px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              placeholder="Create a password"
             />
           </div>
-          {error && <p className="text-sm text-red-400">{error}</p>}
+          {error && (
+            <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3">
+              <p className="text-sm text-red-800">{error}</p>
+            </div>
+          )}
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-red-500 py-2 text-sm font-semibold hover:bg-red-600 transition"
+            className="w-full rounded-lg bg-orange-500 py-3 text-sm font-semibold text-white hover:bg-orange-600 transition shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Creating account...' : 'Sign up'}
+            {loading ? 'Creating account...' : 'Sign Up'}
           </button>
         </form>
+        <p className="mt-6 text-center text-sm text-gray-600">
+          Already have an account?{' '}
+          <Link to="/login" className="text-orange-500 hover:text-orange-600 font-semibold">
+            Sign in
+          </Link>
+        </p>
       </div>
     </div>
   );

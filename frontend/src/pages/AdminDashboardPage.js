@@ -13,8 +13,6 @@ const AdminDashboardPage = () => {
     todayOrdersCount: 0,
     menuCount: 0,
     workersCount: 0,
-
-    // NEW stats
     dailyRevenue: 0,
     dailyCount: 0,
     weeklyRevenue: 0,
@@ -28,15 +26,13 @@ const AdminDashboardPage = () => {
       setLoading(true);
 
       try {
-        // Fetch existing dataset
         const [orders, menu, workers, sales] = await Promise.all([
           apiFetch('/api/orders', {}, token),
           apiFetch('/api/menu'),
           apiFetch('/api/workers', {}, token),
-          apiFetch('/api/orders/stats', {}, token), // NEW
+          apiFetch('/api/orders/stats', {}, token),
         ]);
 
-        // Compute today's orders (same logic as before)
         const today = new Date();
         const todayOrders = orders.filter((o) => {
           if (!o.createdAt) return false;
@@ -53,14 +49,10 @@ const AdminDashboardPage = () => {
           todayOrdersCount: todayOrders.length,
           menuCount: menu.length,
           workersCount: workers.length,
-
-          // New metrics from backend
           dailyRevenue: sales.daily.total,
           dailyCount: sales.daily.count,
-
           weeklyRevenue: sales.weekly.total,
           weeklyCount: sales.weekly.count,
-
           monthlyRevenue: sales.monthly.total,
           monthlyCount: sales.monthly.count,
         });
@@ -75,118 +67,111 @@ const AdminDashboardPage = () => {
   }, [token]);
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold mb-1">Admin Dashboard</h1>
-        <p className="text-sm text-slate-400">
-          Overview of Tasty Bites activity.
-        </p>
-      </div>
-
-      {/* ===========================
-          FIRST ROW — BASIC STATS
-          =========================== */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-4">
-          <p className="text-xs text-slate-400 mb-1">Total Orders</p>
-          <p className="text-2xl font-semibold">
-            {loading ? '...' : stats.ordersCount}
+    <div className="bg-gray-50 min-h-screen py-8 w-full">
+      <div className="max-w-7xl mx-auto px-4 w-full">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
+          <p className="text-gray-600">
+            Overview of Shawarma Hub activity.
           </p>
         </div>
 
-        <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-4">
-          <p className="text-xs text-slate-400 mb-1">Today&apos;s Orders</p>
-          <p className="text-2xl font-semibold">
-            {loading ? '...' : stats.todayOrdersCount}
-          </p>
+        {/* Basic Stats */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+            <p className="text-sm text-gray-600 mb-2">Total Orders</p>
+            <p className="text-3xl font-bold text-gray-900">
+              {loading ? '...' : stats.ordersCount}
+            </p>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+            <p className="text-sm text-gray-600 mb-2">Today's Orders</p>
+            <p className="text-3xl font-bold text-orange-500">
+              {loading ? '...' : stats.todayOrdersCount}
+            </p>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+            <p className="text-sm text-gray-600 mb-2">Menu Items</p>
+            <p className="text-3xl font-bold text-gray-900">
+              {loading ? '...' : stats.menuCount}
+            </p>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+            <p className="text-sm text-gray-600 mb-2">Workers</p>
+            <p className="text-3xl font-bold text-gray-900">
+              {loading ? '...' : stats.workersCount}
+            </p>
+          </div>
         </div>
 
-        <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-4">
-          <p className="text-xs text-slate-400 mb-1">Menu Items</p>
-          <p className="text-2xl font-semibold">
-            {loading ? '...' : stats.menuCount}
-          </p>
+        {/* Sales Metrics */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+            <p className="text-sm text-gray-600 mb-2">Daily Sales</p>
+            <p className="text-2xl font-bold text-gray-900 mb-1">
+              {loading ? '...' : `$${stats.dailyRevenue.toFixed(2)}`}
+            </p>
+            <p className="text-sm text-gray-500">
+              {loading ? '' : `${stats.dailyCount} orders`}
+            </p>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+            <p className="text-sm text-gray-600 mb-2">Weekly Sales</p>
+            <p className="text-2xl font-bold text-gray-900 mb-1">
+              {loading ? '...' : `$${stats.weeklyRevenue.toFixed(2)}`}
+            </p>
+            <p className="text-sm text-gray-500">
+              {loading ? '' : `${stats.weeklyCount} orders`}
+            </p>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+            <p className="text-sm text-gray-600 mb-2">Monthly Sales</p>
+            <p className="text-2xl font-bold text-gray-900 mb-1">
+              {loading ? '...' : `$${stats.monthlyRevenue.toFixed(2)}`}
+            </p>
+            <p className="text-sm text-gray-500">
+              {loading ? '' : `${stats.monthlyCount} orders`}
+            </p>
+          </div>
         </div>
 
-        <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-4">
-          <p className="text-xs text-slate-400 mb-1">Workers</p>
-          <p className="text-2xl font-semibold">
-            {loading ? '...' : stats.workersCount}
-          </p>
+        {/* Navigation Links */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Link
+            to="/admin/menu"
+            className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:border-orange-500 hover:shadow-md transition"
+          >
+            <h2 className="text-lg font-bold text-gray-900 mb-2">Manage Menu</h2>
+            <p className="text-sm text-gray-600">
+              Add new dishes or remove existing items.
+            </p>
+          </Link>
+
+          <Link
+            to="/admin/orders"
+            className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:border-orange-500 hover:shadow-md transition"
+          >
+            <h2 className="text-lg font-bold text-gray-900 mb-2">View Orders</h2>
+            <p className="text-sm text-gray-600">
+              Monitor all customer orders and statuses.
+            </p>
+          </Link>
+
+          <Link
+            to="/admin/workers"
+            className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:border-orange-500 hover:shadow-md transition"
+          >
+            <h2 className="text-lg font-bold text-gray-900 mb-2">Workers</h2>
+            <p className="text-sm text-gray-600">
+              View and manage your restaurant staff list.
+            </p>
+          </Link>
         </div>
-      </div>
-
-      {/* ===========================
-          SECOND ROW — SALES METRICS
-          =========================== */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {/* DAILY */}
-        <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-4">
-          <p className="text-xs text-slate-400 mb-1">Daily Sales</p>
-          <p className="text-xl font-semibold mb-1">
-            {loading ? '...' : `$${stats.dailyRevenue.toFixed(2)}`}
-          </p>
-          <p className="text-xs text-slate-500">
-            {loading ? '' : `${stats.dailyCount} orders`}
-          </p>
-        </div>
-
-        {/* WEEKLY */}
-        <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-4">
-          <p className="text-xs text-slate-400 mb-1">Weekly Sales</p>
-          <p className="text-xl font-semibold mb-1">
-            {loading ? '...' : `$${stats.weeklyRevenue.toFixed(2)}`}
-          </p>
-          <p className="text-xs text-slate-500">
-            {loading ? '' : `${stats.weeklyCount} orders`}
-          </p>
-        </div>
-
-        {/* MONTHLY */}
-        <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-4">
-          <p className="text-xs text-slate-400 mb-1">Monthly Sales</p>
-          <p className="text-xl font-semibold mb-1">
-            {loading ? '...' : `$${stats.monthlyRevenue.toFixed(2)}`}
-          </p>
-          <p className="text-xs text-slate-500">
-            {loading ? '' : `${stats.monthlyCount} orders`}
-          </p>
-        </div>
-      </div>
-
-      {/* ===========================
-          NAV LINKS
-          =========================== */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Link
-          to="/admin/menu"
-          className="rounded-2xl bg-slate-900/80 border border-slate-800 p-4 hover:border-red-500/70 hover:shadow-md transition"
-        >
-          <h2 className="text-sm font-semibold mb-1">Manage Menu</h2>
-          <p className="text-xs text-slate-400">
-            Add new dishes or remove existing items.
-          </p>
-        </Link>
-
-        <Link
-          to="/admin/orders"
-          className="rounded-2xl bg-slate-900/80 border border-slate-800 p-4 hover:border-red-500/70 hover:shadow-md transition"
-        >
-          <h2 className="text-sm font-semibold mb-1">View Orders</h2>
-          <p className="text-xs text-slate-400">
-            Monitor all customer orders and statuses.
-          </p>
-        </Link>
-
-        <Link
-          to="/admin/workers"
-          className="rounded-2xl bg-slate-900/80 border border-slate-800 p-4 hover:border-red-500/70 hover:shadow-md transition"
-        >
-          <h2 className="text-sm font-semibold mb-1">Workers</h2>
-          <p className="text-xs text-slate-400">
-            View and manage your restaurant staff list.
-          </p>
-        </Link>
       </div>
     </div>
   );

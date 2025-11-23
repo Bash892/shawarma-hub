@@ -30,11 +30,11 @@ const SchedulesTable = ({ schedules, loading, onDelete }) => {
   };
 
   if (loading) {
-    return <p className="text-sm text-slate-400">Loading schedules...</p>;
+    return <p className="text-sm text-gray-600">Loading schedules...</p>;
   }
 
   if (!schedules || schedules.length === 0) {
-    return <p className="text-sm text-slate-400">No schedules added yet.</p>;
+    return <p className="text-sm text-gray-600">No schedules added yet.</p>;
   }
 
   const handleDeleteClick = (id) => {
@@ -44,57 +44,57 @@ const SchedulesTable = ({ schedules, loading, onDelete }) => {
   };
 
   return (
-    <div className="overflow-x-auto rounded-2xl bg-slate-900/80 border border-slate-800">
+    <div className="overflow-x-auto rounded-2xl bg-white border border-gray-200 shadow-sm">
       <table className="min-w-full text-xs text-left">
-        <thead className="bg-slate-950/70 border-b border-slate-800">
+        <thead className="bg-gray-50 border-b border-gray-200">
           <tr>
-            <th className="px-3 py-2 font-semibold text-slate-300">Worker</th>
-            <th className="px-3 py-2 font-semibold text-slate-300 hidden sm:table-cell">
+            <th className="px-3 py-2 font-semibold text-gray-900">Worker</th>
+            <th className="px-3 py-2 font-semibold text-gray-900 hidden sm:table-cell">
               Role
             </th>
-            <th className="px-3 py-2 font-semibold text-slate-300 hidden md:table-cell">
+            <th className="px-3 py-2 font-semibold text-gray-900 hidden md:table-cell">
               Phone
             </th>
-            <th className="px-3 py-2 font-semibold text-slate-300">Date</th>
-            <th className="px-3 py-2 font-semibold text-slate-300">Start</th>
-            <th className="px-3 py-2 font-semibold text-slate-300">End</th>
-            <th className="px-3 py-2 font-semibold text-slate-300 hidden sm:table-cell">
+            <th className="px-3 py-2 font-semibold text-gray-900">Date</th>
+            <th className="px-3 py-2 font-semibold text-gray-900">Start</th>
+            <th className="px-3 py-2 font-semibold text-gray-900">End</th>
+            <th className="px-3 py-2 font-semibold text-gray-900 hidden sm:table-cell">
               Duration
             </th>
-            <th className="px-3 py-2 font-semibold text-slate-300 text-right">
+            <th className="px-3 py-2 font-semibold text-gray-900 text-right">
               Actions
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-800">
+        <tbody className="divide-y divide-gray-200">
           {schedules.map((s) => (
-            <tr key={s._id} className="hover:bg-slate-800/50">
-              <td className="px-3 py-2 text-slate-100">
+            <tr key={s._id} className="hover:bg-gray-50">
+              <td className="px-3 py-2 text-gray-900">
                 {s.worker?.name || 'Unknown worker'}
               </td>
-              <td className="px-3 py-2 text-slate-300 hidden sm:table-cell">
+              <td className="px-3 py-2 text-gray-700 hidden sm:table-cell">
                 {s.worker?.role || '—'}
               </td>
-              <td className="px-3 py-2 text-slate-400 hidden md:table-cell">
+              <td className="px-3 py-2 text-gray-600 hidden md:table-cell">
                 {s.worker?.phone || '—'}
               </td>
-              <td className="px-3 py-2 text-slate-200">
+              <td className="px-3 py-2 text-gray-900">
                 {formatDate(s.start)}
               </td>
-              <td className="px-3 py-2 text-slate-200">
+              <td className="px-3 py-2 text-gray-900">
                 {formatTime(s.start)}
               </td>
-              <td className="px-3 py-2 text-slate-200">
+              <td className="px-3 py-2 text-gray-900">
                 {formatTime(s.end)}
               </td>
-              <td className="px-3 py-2 text-slate-300 hidden sm:table-cell">
+              <td className="px-3 py-2 text-gray-700 hidden sm:table-cell">
                 {formatDuration(s.start, s.end) || '—'}
               </td>
               <td className="px-3 py-2 text-right">
                 <button
                   type="button"
                   onClick={() => handleDeleteClick(s._id)}
-                  className="text-[11px] text-red-400 hover:text-red-300"
+                  className="text-[11px] text-red-600 hover:text-red-700"
                 >
                   Delete
                 </button>

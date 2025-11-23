@@ -9,7 +9,7 @@ const connectDB = async () => {
     // Seed default menu items if none exist
     await seedDefaultMenu();
   } catch (error) {
-    console.error('MongoDB connection error:', error.message);
+    console.error('Database connection error:', error);
     process.exit(1);
   }
 };
@@ -21,55 +21,146 @@ const seedDefaultMenu = async () => {
       return; // already have items, do nothing
     }
 
-    console.log('Seeding default menu items...');
+    console.log('Seeding Shawarma Hub menu items...');
 
     const defaultItems = [
+      // Shawarma Wraps
       {
-        name: 'Classic Cheeseburger',
-        description: 'Juicy beef patty, melted cheese, lettuce, tomato, and our secret sauce.',
+        name: 'Classic Chicken Shawarma Wrap',
+        description: 'Tender marinated chicken, fresh vegetables, tahini sauce, and pickles wrapped in warm pita bread.',
+        price: 8.99,
+        category: 'Shawarma',
+        imageUrl: '/images/chicken-shawarma.jpg',
+      },
+      {
+        name: 'Beef Shawarma Wrap',
+        description: 'Spiced beef shawarma with onions, tomatoes, parsley, and garlic sauce in a fresh pita wrap.',
         price: 9.99,
-        category: 'Burgers',
-        imageUrl: '/images/cheeseburger.jpg',
+        category: 'Shawarma',
+        imageUrl: '/images/beef-shawarma.jpg',
       },
       {
-        name: 'Margherita Pizza',
-        description: 'Thin crust pizza with fresh mozzarella, basil, and tomato sauce.',
-        price: 12.99,
-        category: 'Pizza',
-        imageUrl: '/images/margherita-pizza.jpg',
-      },
-      {
-        name: 'Grilled Chicken Salad',
-        description: 'Mixed greens with grilled chicken, cherry tomatoes, cucumbers, and vinaigrette.',
-        price: 10.49,
-        category: 'Salads',
-        imageUrl: '/images/grilled-chicken-salad.jpg',
-      },
-      {
-        name: 'Spaghetti Bolognese',
-        description: 'Pasta in a rich beef and tomato sauce topped with parmesan.',
+        name: 'Lamb Shawarma Wrap',
+        description: 'Premium lamb shawarma with mixed vegetables, tahini, and our signature hot sauce.',
         price: 11.99,
-        category: 'Pasta',
-        imageUrl: '/images/spaghetti-bolognese.jpg',
+        category: 'Shawarma',
+        imageUrl: '/images/lamb-shawarma.jpg',
       },
       {
-        name: 'Crispy Fries',
-        description: 'Golden, crispy French fries with a side of ketchup.',
+        name: 'Mixed Shawarma Wrap',
+        description: 'Combination of chicken and beef shawarma with all the fixings in one delicious wrap.',
+        price: 10.99,
+        category: 'Shawarma',
+        imageUrl: '/images/mixed-shawarma.jpg',
+      },
+      {
+        name: 'Falafel Wrap',
+        description: 'Crispy falafel balls with fresh vegetables, hummus, and tahini sauce. Vegetarian option.',
+        price: 7.99,
+        category: 'Shawarma',
+        imageUrl: '/images/falafel-wrap.jpg',
+      },
+      {
+        name: 'Chicken Shawarma Plate',
+        description: 'Chicken shawarma served over basmati rice with hummus, salad, pickles, and pita bread.',
+        price: 12.99,
+        category: 'Shawarma',
+        imageUrl: '/images/chicken-plate.jpg',
+      },
+      {
+        name: 'Beef Shawarma Plate',
+        description: 'Beef shawarma with rice, garlic sauce, fresh salad, and warm pita on the side.',
+        price: 13.99,
+        category: 'Shawarma',
+        imageUrl: '/images/beef-plate.jpg',
+      },
+      
+      // Sides
+      {
+        name: 'Crispy French Fries',
+        description: 'Golden, crispy French fries seasoned with Mediterranean spices. Served with ketchup.',
         price: 3.99,
         category: 'Sides',
         imageUrl: '/images/fries.jpg',
       },
       {
-        name: 'Chocolate Milkshake',
-        description: 'Creamy chocolate milkshake topped with whipped cream.',
+        name: 'Hummus & Pita',
+        description: 'Creamy homemade hummus served with warm pita bread. Perfect starter or side.',
         price: 4.99,
+        category: 'Sides',
+        imageUrl: '/images/hummus.jpg',
+      },
+      {
+        name: 'Baba Ganoush',
+        description: 'Smoky roasted eggplant dip with tahini, lemon, and garlic. Served with pita.',
+        price: 5.49,
+        category: 'Sides',
+        imageUrl: '/images/baba-ganoush.jpg',
+      },
+      {
+        name: 'Fattoush Salad',
+        description: 'Fresh mixed greens with tomatoes, cucumbers, radish, and crispy pita chips.',
+        price: 6.99,
+        category: 'Salads',
+        imageUrl: '/images/fattoush-salad.jpg',
+      },
+      {
+        name: 'Tabbouleh',
+        description: 'Fresh parsley salad with bulgur, tomatoes, mint, and lemon dressing.',
+        price: 5.99,
+        category: 'Salads',
+        imageUrl: '/images/tabbouleh.jpg',
+      },
+      
+      // Drinks
+      {
+        name: 'Fresh Lemonade',
+        description: 'Freshly squeezed lemonade with mint. Refreshing and tangy.',
+        price: 3.49,
         category: 'Drinks',
-        imageUrl: '/images/chocolate-milkshake.jpg',
+        imageUrl: '/images/lemonade.jpg',
+      },
+      {
+        name: 'Mint Tea',
+        description: 'Traditional hot mint tea. Perfect to complement your meal.',
+        price: 2.99,
+        category: 'Drinks',
+        imageUrl: '/images/mint-tea.jpg',
+      },
+      {
+        name: 'Ayran',
+        description: 'Traditional yogurt drink with salt. Cool and refreshing.',
+        price: 3.99,
+        category: 'Drinks',
+        imageUrl: '/images/ayran.jpg',
+      },
+      {
+        name: 'Turkish Coffee',
+        description: 'Strong, aromatic Turkish coffee served in traditional style.',
+        price: 4.49,
+        category: 'Drinks',
+        imageUrl: '/images/turkish-coffee.jpg',
+      },
+      
+      // Desserts
+      {
+        name: 'Baklava',
+        description: 'Sweet pastry made of layers of filo filled with chopped nuts and honey syrup.',
+        price: 4.99,
+        category: 'Desserts',
+        imageUrl: '/images/baklava.jpg',
+      },
+      {
+        name: 'Kunafa',
+        description: 'Sweet cheese pastry soaked in sweet syrup. A Middle Eastern favorite.',
+        price: 5.99,
+        category: 'Desserts',
+        imageUrl: '/images/kunafa.jpg',
       },
     ];
 
     await FoodItem.insertMany(defaultItems);
-    console.log('Default menu items seeded.');
+    console.log('Shawarma Hub menu items seeded successfully!');
   } catch (err) {
     console.error('Error seeding default menu:', err.message);
   }

@@ -3,7 +3,29 @@ const FoodItem = require('../models/FoodItem');
 // GET /api/menu
 const getMenu = async (req, res) => {
   try {
-    const items = await FoodItem.find({ isAvailable: true }).sort({ createdAt: -1 });
+    const items = await FoodItem.find({ isAvailable: true });
+    
+    // Define category order: Shawarma, Desserts, Salads, Sides, Drinks
+    const categoryOrder = {
+      'Shawarma': 1,
+      'Desserts': 2,
+      'Salads': 3,
+      'Sides': 4,
+      'Drinks': 5,
+    };
+    
+    // Sort items by category order, then by name within each category
+    items.sort((a, b) => {
+      const orderA = categoryOrder[a.category] || 999;
+      const orderB = categoryOrder[b.category] || 999;
+      
+      if (orderA !== orderB) {
+        return orderA - orderB;
+      }
+      
+      return a.name.localeCompare(b.name);
+    });
+    
     res.json(items);
   } catch (error) {
     console.error('getMenu error:', error);

@@ -1,6 +1,7 @@
-# 🍔 Tasty Bites  
+# 🌯 Shawarma Hub  
 **A full-stack food delivery web application built with the MERN stack + Stripe.**  
-Customers can browse food items, add to cart, place orders, and pay securely.  
+Delicious shawarma, delivered fast. Pickup and delivery from your favorite local spot.  
+Customers can browse shawarma, wraps, salads, and more - add to cart, place orders, and pay securely.  
 Admins can manage menu items, orders, and workers through a secure dashboard.
 
 ---
@@ -31,12 +32,12 @@ Deployment will be added after testing and final checks.
 
 ## 👤 **User Features**
 - Create account & login  
-- Browse menu (with default & admin-added items)  
+- Browse menu featuring shawarma, wraps, salads, desserts, drinks, and more  
 - Add to cart (localStorage persistent)  
 - Choose **Delivery** or **Pickup**  
 - Checkout using **Stripe**  
 - View past orders  
-- Mobile-friendly and responsive (DoorDash-style UI)
+- Mobile-friendly and responsive (modern food delivery UI)
 
 ---
 
@@ -55,7 +56,7 @@ Accessible only to accounts created with `ADMIN_SECRET`.
 # 📁 Project Structure
 
 ```
-Tasty-Bites/
+Shawarma-Hub/
 │
 ├── backend/
 │   ├── controllers/
@@ -86,7 +87,7 @@ Tasty-Bites/
 ## **Backend (`backend/.env`)**
 ```
 MONGO_URL=your-mongodb-uri
-DB_NAME=tasty_bites
+DB_NAME=shawarma_hub
 JWT_SECRET=your-jwt-secret
 ADMIN_SECRET=your-admin-secret
 STRIPE_API_KEY=your-stripe-secret-key
@@ -106,8 +107,8 @@ REACT_APP_API_BASE_URL=http://localhost:5000
 
 ## Clone the Repository  
 ```bash
-git clone https://github.com/nanaboakye-dev/tasty-bites.git
-cd tasty-bites
+git clone <your-repo-url>
+cd shawarma-hub
 ```
 
 ---
@@ -178,8 +179,8 @@ Once the project is verified.
 ---
 
 # 👨‍💻 Author  
-**Nana Boakye**  
-GitHub: [@nanaboakye-dev](https://github.com/nanaboakye-dev)
+**Abdullah Bashir**  
+Built with ❤️ for Shawarma Hub
 
 ---
 
@@ -189,4 +190,4 @@ Pull requests are welcome. For major changes, open an issue first to discuss you
 ---
 
 # 📄 License  
-MIT License © 2025 Tasty Bites
+MIT License © 2025 Shawarma Hub

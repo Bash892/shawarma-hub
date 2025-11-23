@@ -173,48 +173,50 @@ const AdminWorkersPage = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="w-full min-h-screen bg-gray-50 py-8">
+      <div className="max-w-7xl mx-auto px-4 w-full">
+        <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold mb-1">Workers</h1>
-        <p className="text-sm text-slate-400">
-          View and add staff for Tasty Bites, and manage their schedules.
+        <h1 className="text-2xl font-semibold mb-1 text-gray-900">Workers</h1>
+        <p className="text-sm text-gray-600">
+          View and add staff for Shawarma Hub, and manage their schedules.
         </p>
       </div>
 
       {/* Add worker */}
-      <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-4">
-        <h2 className="text-sm font-semibold mb-3">Add Worker</h2>
+      <div className="rounded-2xl bg-white border border-gray-200 p-4 shadow-sm">
+        <h2 className="text-sm font-semibold mb-3 text-gray-900">Add Worker</h2>
         <form onSubmit={onSubmit} className="grid gap-3 md:grid-cols-3">
           <div>
-            <label className="block text-xs mb-1">Name</label>
+            <label className="block text-xs mb-1 text-gray-700">Name</label>
             <input
               name="name"
               value={form.name}
               onChange={onChange}
-              className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-xs focus:outline-none focus:border-red-500"
+              className="w-full rounded-lg bg-white border border-gray-300 px-3 py-2 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-orange-500"
             />
           </div>
           <div>
-            <label className="block text-xs mb-1">Role</label>
+            <label className="block text-xs mb-1 text-gray-700">Role</label>
             <input
               name="role"
               value={form.role}
               onChange={onChange}
-              className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-xs focus:outline-none focus:border-red-500"
+              className="w-full rounded-lg bg-white border border-gray-300 px-3 py-2 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-orange-500"
               placeholder="e.g. Chef, Driver, Cashier"
             />
           </div>
           <div>
-            <label className="block text-xs mb-1">Phone</label>
+            <label className="block text-xs mb-1 text-gray-700">Phone</label>
             <input
               name="phone"
               value={form.phone}
               onChange={onChange}
-              className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-xs focus:outline-none focus:border-red-500"
+              className="w-full rounded-lg bg-white border border-gray-300 px-3 py-2 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-orange-500"
             />
           </div>
           {error && (
-            <div className="md:col-span-3 text-xs text-red-400">
+            <div className="md:col-span-3 text-xs text-red-600">
               {error}
             </div>
           )}
@@ -222,7 +224,7 @@ const AdminWorkersPage = () => {
             <button
               type="submit"
               disabled={savingWorker}
-              className="rounded-full bg-red-500 px-4 py-2 text-xs font-semibold text-white hover:bg-red-600 transition disabled:opacity-60"
+              className="rounded-full bg-orange-500 px-4 py-2 text-xs font-semibold text-white hover:bg-orange-600 transition disabled:opacity-60"
             >
               {savingWorker ? 'Saving...' : 'Add Worker'}
             </button>
@@ -232,32 +234,32 @@ const AdminWorkersPage = () => {
 
       {/* Worker list */}
       <div>
-        <h2 className="text-sm font-semibold mb-2">Current Workers</h2>
+        <h2 className="text-sm font-semibold mb-2 text-gray-900">Current Workers</h2>
         {loadingWorkers ? (
-          <p className="text-sm text-slate-400">Loading workers...</p>
+          <p className="text-sm text-gray-600">Loading workers...</p>
         ) : workers.length === 0 ? (
-          <p className="text-sm text-slate-400">No workers added yet.</p>
+          <p className="text-sm text-gray-600">No workers added yet.</p>
         ) : (
           <div className="space-y-2">
             {workers.map((w) => (
               <div
                 key={w._id}
-                className="flex items-center justify-between rounded-xl bg-slate-900/80 border border-slate-800 px-3 py-2 text-xs"
+                className="flex items-center justify-between rounded-xl bg-white border border-gray-200 px-3 py-2 text-xs shadow-sm"
               >
                 <div>
-                  <p className="font-semibold text-slate-100">{w.name}</p>
-                  <p className="text-slate-400">{w.role}</p>
+                  <p className="font-semibold text-gray-900">{w.name}</p>
+                  <p className="text-gray-600">{w.role}</p>
                   {w.phone && (
-                    <p className="text-[11px] text-slate-500">{w.phone}</p>
+                    <p className="text-[11px] text-gray-500">{w.phone}</p>
                   )}
                 </div>
                 <div className="text-right flex flex-col items-end gap-1">
-                  <span className="inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5 text-[10px] text-slate-300">
+                  <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-[10px] text-gray-700">
                     {w.active === false ? 'Inactive' : 'Active'}
                   </span>
                   <button
                     onClick={() => handleDeleteWorker(w._id)}
-                    className="text-[11px] text-red-400 hover:text-red-300"
+                    className="text-[11px] text-red-600 hover:text-red-700"
                   >
                     Remove
                   </button>
@@ -269,19 +271,19 @@ const AdminWorkersPage = () => {
       </div>
 
       {/* Scheduler form */}
-      <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-4">
-        <h2 className="text-sm font-semibold mb-3">Create Worker Schedule</h2>
+      <div className="rounded-2xl bg-white border border-gray-200 p-4 shadow-sm">
+        <h2 className="text-sm font-semibold mb-3 text-gray-900">Create Worker Schedule</h2>
         <form
           onSubmit={onSubmitSchedule}
           className="grid gap-3 md:grid-cols-4"
         >
           <div>
-            <label className="block text-xs mb-1">Worker</label>
+            <label className="block text-xs mb-1 text-gray-700">Worker</label>
             <select
               name="workerId"
               value={scheduleForm.workerId}
               onChange={onScheduleChange}
-              className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-red-500"
+              className="w-full rounded-lg bg-white border border-gray-300 px-3 py-2 text-xs text-gray-900 focus:outline-none focus:border-orange-500"
             >
               <option value="">Select worker</option>
               {workers.map((w) => (
@@ -292,37 +294,37 @@ const AdminWorkersPage = () => {
             </select>
           </div>
           <div>
-            <label className="block text-xs mb-1">Date</label>
+            <label className="block text-xs mb-1 text-gray-700">Date</label>
             <input
               type="date"
               name="date"
               value={scheduleForm.date}
               onChange={onScheduleChange}
-              className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-red-500"
+              className="w-full rounded-lg bg-white border border-gray-300 px-3 py-2 text-xs text-gray-900 focus:outline-none focus:border-orange-500"
             />
           </div>
           <div>
-            <label className="block text-xs mb-1">Start Time</label>
+            <label className="block text-xs mb-1 text-gray-700">Start Time</label>
             <input
               type="time"
               name="startTime"
               value={scheduleForm.startTime}
               onChange={onScheduleChange}
-              className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-red-500"
+              className="w-full rounded-lg bg-white border border-gray-300 px-3 py-2 text-xs text-gray-900 focus:outline-none focus:border-orange-500"
             />
           </div>
           <div>
-            <label className="block text-xs mb-1">End Time</label>
+            <label className="block text-xs mb-1 text-gray-700">End Time</label>
             <input
               type="time"
               name="endTime"
               value={scheduleForm.endTime}
               onChange={onScheduleChange}
-              className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-red-500"
+              className="w-full rounded-lg bg-white border border-gray-300 px-3 py-2 text-xs text-gray-900 focus:outline-none focus:border-orange-500"
             />
           </div>
           {scheduleError && (
-            <div className="md:col-span-4 text-xs text-red-400">
+            <div className="md:col-span-4 text-xs text-red-600">
               {scheduleError}
             </div>
           )}
@@ -330,7 +332,7 @@ const AdminWorkersPage = () => {
             <button
               type="submit"
               disabled={savingSchedule}
-              className="rounded-full bg-red-500 px-4 py-2 text-xs font-semibold text-white hover:bg-red-600 transition disabled:opacity-60"
+              className="rounded-full bg-orange-500 px-4 py-2 text-xs font-semibold text-white hover:bg-orange-600 transition disabled:opacity-60"
             >
               {savingSchedule ? 'Saving...' : 'Create Schedule'}
             </button>
@@ -340,12 +342,14 @@ const AdminWorkersPage = () => {
 
       {/* Schedules table */}
       <div className="space-y-2">
-        <h2 className="text-sm font-semibold mb-2">All Schedules</h2>
+        <h2 className="text-sm font-semibold mb-2 text-gray-900">All Schedules</h2>
         <SchedulesTable
           schedules={schedules}
           loading={loadingSchedules}
           onDelete={handleDeleteSchedule}
         />
+        </div>
+        </div>
       </div>
     </div>
   );
