@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { apiFetch } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 
@@ -26,6 +26,7 @@ const AdminOrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [workers, setWorkers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filterStatus, setFilterStatus] = useState('all');
 
   // load all orders + workers
   useEffect(() => {
@@ -94,133 +95,217 @@ const AdminOrdersPage = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center text-gray-600">
-        Loading orders...
-      </div>
+  const filteredOrders = useMemo(() => {
+    if (filterStatus === 'all') return orders;
+    return orders.filter(
+      (order) => (order.status || 'pending').toLowerCase() === filterStatus
     );
-  }
+  }, [orders, filterStatus]);
 
   return (
     <div className="w-full min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 w-full">
+      <div className="max-w-7xl mx-auto px-4 w-full space-y-8">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#1F2933] via-[#FF5A2D] to-[#FF2D20] text-white p-8 shadow-xl">
+          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.6),_transparent_55%)]" />
+          <div className="relative flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-[0.4em] text-white/70 mb-3">
+                Fulfillment Center
+              </p>
+              <h1 className="text-3xl md:text-4xl font-bold">
+                Live Orders Command Deck
+              </h1>
+              <p className="mt-2 text-white/80 max-w-3xl">
+                Monitor order lifecycle, reassign couriers, and update kitchen
+                stages with real-time data pulled from the order service.
+              </p>
+            </div>
+            <div className="bg-white/10 rounded-2xl p-4 min-w-[220px] backdrop-blur-sm">
+              <p className="text-xs uppercase tracking-wide mb-1 text-white/70">
+                Orders in queue
+              </p>
+              <p className="text-4xl font-semibold">
+                {loading ? '...' : orders.length}
+              </p>
+              <p className="text-sm text-white/70">
+                {orders.filter((o) => o.status === 'pending').length} awaiting
+                prep
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900">
+                Order Streams
+              </h2>
+              <p className="text-sm text-gray-500">
+                Filter by status to focus on the most critical queue.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {['all', ...statusOptions].map((status) => (
+                <button
+                  key={status}
+                  onClick={() => setFilterStatus(status)}
+                  className={`px-4 py-2 rounded-full text-sm font-semibold border transition ${
+                    filterStatus === status
+                      ? 'bg-orange-500 text-white border-orange-500 shadow-sm'
+                      : 'bg-white border-gray-200 text-gray-600 hover:border-orange-400'
+                  }`}
+                >
+                  {status === 'all'
+                    ? 'All Orders'
+                    : status.charAt(0).toUpperCase() + status.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
         <div className="space-y-4">
-      <h1 className="text-2xl font-semibold mb-2 text-gray-900">All Orders</h1>
-      {orders.length === 0 ? (
-        <p className="text-sm text-gray-600">
-          No orders have been placed yet.
-        </p>
-      ) : (
-        <div className="space-y-3">
-          {orders.map((order) => (
-            <div
-              key={order._id}
-              className="rounded-2xl bg-white border border-gray-200 p-4 shadow-sm"
-            >
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-3">
-                <div className="space-y-1">
-                  <p className="text-xs text-gray-500">
-                    Order #{order._id.slice(-6)}
-                  </p>
-                  <p className="text-sm text-gray-900 font-semibold">
-                    {order.user?.name || 'Unknown customer'}
-                  </p>
-                  <p className="text-[11px] text-gray-600">
-                    {order.user?.email}
-                  </p>
-                  <p className="text-[11px] text-gray-600">
-                    📞 {order.deliveryDetails?.phone || 'No phone on file'}
-                  </p>
-                  <p className="text-[11px] text-gray-600">
-                    📍 {order.deliveryDetails?.address || 'No address on file'}
-                  </p>
-                  <p className="text-[11px] text-gray-500">
-                    {order.createdAt
-                      ? new Date(order.createdAt).toLocaleString()
-                      : ''}
-                  </p>
-                </div>
-
-                {/* status + controls + worker assignment */}
-                <div className="flex flex-col items-end gap-2">
-                  {/* current status badge */}
-                  <span
-                    className={`inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-medium ${statusColor(
-                      order.status
-                    )}`}
-                  >
-                    {order.status || 'Unknown'}
-                  </span>
-
-                  {/* dropdown to change status */}
-                  <select
-                    value={order.status || 'pending'}
-                    onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                    className="text-[11px] bg-white border border-gray-300 rounded-full px-2 py-1 text-gray-900 focus:outline-none focus:border-orange-500"
-                  >
-                    {statusOptions.map((s) => (
-                      <option key={s} value={s}>
-                        {s.charAt(0).toUpperCase() + s.slice(1)}
-                      </option>
-                    ))}
-                  </select>
-
-                  {/* order type + total */}
-                  <span className="text-xs text-gray-600">
-                    {order.type === 'pickup' ? 'Pickup' : 'Delivery'}
-                  </span>
-                  <span className="text-sm font-semibold text-gray-900">
-                    ${order.totalAmount?.toFixed(2) ?? '0.00'}
-                  </span>
-
-                  {/* worker assignment */}
-                  <div className="mt-1 text-right">
-                    <p className="text-[11px] text-gray-600 mb-1">
-                      Assigned to:{' '}
-                      <span className="text-gray-900">
-                        {order.assignedWorker?.name || 'Unassigned'}
+          {loading ? (
+            <div className="min-h-[40vh] flex items-center justify-center text-gray-500">
+              Loading live orders...
+            </div>
+          ) : filteredOrders.length === 0 ? (
+            <div className="bg-white rounded-3xl border border-gray-100 p-8 text-center text-gray-500">
+              No orders match this filter yet.
+            </div>
+          ) : (
+            filteredOrders.map((order) => (
+              <article
+                key={order._id}
+                className="rounded-3xl border border-gray-100 bg-white shadow-sm hover:shadow-md transition p-5"
+              >
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <p className="text-xs uppercase tracking-[0.4em] text-gray-400">
+                        #{order._id.slice(-6).toUpperCase()}
+                      </p>
+                      <span
+                        className={`inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-medium ${statusColor(
+                          order.status
+                        )}`}
+                      >
+                        {order.status || 'Unknown'}
                       </span>
-                    </p>
-                    <select
-                      value={order.assignedWorker?._id || ''}
-                      onChange={(e) =>
-                        handleAssignWorker(order._id, e.target.value)
-                      }
-                      className="text-[11px] bg-white border border-gray-300 rounded-full px-2 py-1 text-gray-900 focus:outline-none focus:border-orange-500 min-w-[140px]"
-                    >
-                      <option value="">Unassigned</option>
-                      {workers.map((w) => (
-                        <option key={w._id} value={w._id}>
-                          {w.name} ({w.role})
-                        </option>
-                      ))}
-                    </select>
+                    </div>
+                    <div>
+                      <p className="text-lg font-semibold text-gray-900">
+                        {order.user?.name || 'Unknown customer'}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {order.user?.email || 'No email provided'}
+                      </p>
+                    </div>
+                    <div className="text-sm text-gray-600 space-y-1">
+                      <p>📞 {order.deliveryDetails?.phone || 'No phone on file'}</p>
+                      <p>
+                        📍{' '}
+                        {order.deliveryDetails?.address ||
+                          (order.type === 'pickup'
+                            ? 'Pickup'
+                            : 'No address on file')}
+                      </p>
+                      <p>
+                        🕒{' '}
+                        {order.createdAt
+                          ? new Date(order.createdAt).toLocaleString()
+                          : 'Unknown'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex-1 space-y-4">
+                    <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-xs uppercase tracking-wide text-gray-400">
+                            Order Summary
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {order.type === 'pickup' ? 'Pickup' : 'Delivery'} ·{' '}
+                            {order.items?.length || 0} items
+                          </p>
+                        </div>
+                        <p className="text-2xl font-semibold text-gray-900">
+                          ${order.totalAmount?.toFixed(2) ?? '0.00'}
+                        </p>
+                      </div>
+                      <ul className="mt-3 space-y-1 text-sm text-gray-700">
+                        {order.items?.map((item) => (
+                          <li
+                            key={item._id}
+                            className="flex justify-between text-gray-600"
+                          >
+                            <span>
+                              {item.foodItem?.name || 'Item'} x {item.quantity}
+                            </span>
+                            <span>
+                              ${(
+                                (item.foodItem?.price || 0) * item.quantity
+                              ).toFixed(2)}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="rounded-2xl border border-gray-100 p-3 flex flex-col gap-2">
+                        <p className="text-xs font-semibold text-gray-500">
+                          Update Status
+                        </p>
+                        <select
+                          value={order.status || 'pending'}
+                          onChange={(e) =>
+                            handleStatusChange(order._id, e.target.value)
+                          }
+                          className="rounded-2xl border border-gray-200 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-orange-500"
+                        >
+                          {statusOptions.map((s) => (
+                            <option key={s} value={s}>
+                              {s.charAt(0).toUpperCase() + s.slice(1)}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="rounded-2xl border border-gray-100 p-3 flex flex-col gap-2">
+                        <p className="text-xs font-semibold text-gray-500">
+                          Assign Worker
+                        </p>
+                        <select
+                          value={order.assignedWorker?._id || ''}
+                          onChange={(e) =>
+                            handleAssignWorker(order._id, e.target.value)
+                          }
+                          className="rounded-2xl border border-gray-200 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-orange-500"
+                        >
+                          <option value="">Unassigned</option>
+                          {workers.map((w) => (
+                            <option key={w._id} value={w._id}>
+                              {w.name} ({w.role})
+                            </option>
+                          ))}
+                        </select>
+                        <p className="text-xs text-gray-500">
+                          Currently:{' '}
+                          <span className="font-semibold text-gray-900">
+                            {order.assignedWorker?.name || 'Unassigned'}
+                          </span>
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-
-              <div className="border-t border-gray-200 pt-3">
-                <p className="text-xs text-gray-600 mb-1">Items</p>
-                <ul className="space-y-1 text-xs">
-                  {order.items?.map((item) => (
-                    <li key={item._id} className="flex justify-between">
-                      <span className="text-gray-900">
-                        {item.foodItem?.name || 'Item'} x {item.quantity}
-                      </span>
-                      <span className="text-gray-600">
-                        ${(
-                          (item.foodItem?.price || 0) * item.quantity
-                        ).toFixed(2)}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+              </article>
+            ))
+          )}
         </div>
       </div>
     </div>

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { apiFetch } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
+import DashboardOverview from '../components/DashboardOverview';
 
 const AdminDashboardPage = () => {
   const { token } = useAuth();
 
   const [loading, setLoading] = useState(true);
-
+  const [recentOrders, setRecentOrders] = useState([]);
   const [stats, setStats] = useState({
     ordersCount: 0,
     todayOrdersCount: 0,
@@ -56,6 +56,7 @@ const AdminDashboardPage = () => {
           monthlyRevenue: sales.monthly.total,
           monthlyCount: sales.monthly.count,
         });
+        setRecentOrders(orders);
       } catch (err) {
         console.error('Failed to fetch dashboard stats:', err);
       } finally {
@@ -69,109 +70,25 @@ const AdminDashboardPage = () => {
   return (
     <div className="bg-gray-50 min-h-screen py-8 w-full">
       <div className="max-w-7xl mx-auto px-4 w-full">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
-          <p className="text-gray-600">
-            Overview of Shawarma Hub activity.
-          </p>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-8">
+          <div>
+            <p className="text-sm uppercase tracking-[0.45em] text-gray-400">
+              Operations Command
+            </p>
+            <h1 className="text-4xl font-bold text-gray-900">
+              Admin Control Dashboard
+            </h1>
+          </div>
+          <span className="text-sm font-semibold text-green-600 bg-green-50 px-4 py-2 rounded-full">
+            Data synced {new Date().toLocaleTimeString()}
+          </span>
         </div>
 
-        {/* Basic Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-            <p className="text-sm text-gray-600 mb-2">Total Orders</p>
-            <p className="text-3xl font-bold text-gray-900">
-              {loading ? '...' : stats.ordersCount}
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-            <p className="text-sm text-gray-600 mb-2">Today's Orders</p>
-            <p className="text-3xl font-bold text-orange-500">
-              {loading ? '...' : stats.todayOrdersCount}
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-            <p className="text-sm text-gray-600 mb-2">Menu Items</p>
-            <p className="text-3xl font-bold text-gray-900">
-              {loading ? '...' : stats.menuCount}
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-            <p className="text-sm text-gray-600 mb-2">Workers</p>
-            <p className="text-3xl font-bold text-gray-900">
-              {loading ? '...' : stats.workersCount}
-            </p>
-          </div>
-        </div>
-
-        {/* Sales Metrics */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-            <p className="text-sm text-gray-600 mb-2">Daily Sales</p>
-            <p className="text-2xl font-bold text-gray-900 mb-1">
-              {loading ? '...' : `$${stats.dailyRevenue.toFixed(2)}`}
-            </p>
-            <p className="text-sm text-gray-500">
-              {loading ? '' : `${stats.dailyCount} orders`}
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-            <p className="text-sm text-gray-600 mb-2">Weekly Sales</p>
-            <p className="text-2xl font-bold text-gray-900 mb-1">
-              {loading ? '...' : `$${stats.weeklyRevenue.toFixed(2)}`}
-            </p>
-            <p className="text-sm text-gray-500">
-              {loading ? '' : `${stats.weeklyCount} orders`}
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-            <p className="text-sm text-gray-600 mb-2">Monthly Sales</p>
-            <p className="text-2xl font-bold text-gray-900 mb-1">
-              {loading ? '...' : `$${stats.monthlyRevenue.toFixed(2)}`}
-            </p>
-            <p className="text-sm text-gray-500">
-              {loading ? '' : `${stats.monthlyCount} orders`}
-            </p>
-          </div>
-        </div>
-
-        {/* Navigation Links */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Link
-            to="/admin/menu"
-            className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:border-orange-500 hover:shadow-md transition"
-          >
-            <h2 className="text-lg font-bold text-gray-900 mb-2">Manage Menu</h2>
-            <p className="text-sm text-gray-600">
-              Add new dishes or remove existing items.
-            </p>
-          </Link>
-
-          <Link
-            to="/admin/orders"
-            className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:border-orange-500 hover:shadow-md transition"
-          >
-            <h2 className="text-lg font-bold text-gray-900 mb-2">View Orders</h2>
-            <p className="text-sm text-gray-600">
-              Monitor all customer orders and statuses.
-            </p>
-          </Link>
-
-          <Link
-            to="/admin/workers"
-            className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:border-orange-500 hover:shadow-md transition"
-          >
-            <h2 className="text-lg font-bold text-gray-900 mb-2">Workers</h2>
-            <p className="text-sm text-gray-600">
-              View and manage your restaurant staff list.
-            </p>
-          </Link>
-        </div>
+        <DashboardOverview
+          stats={stats}
+          loading={loading}
+          recentOrders={recentOrders}
+        />
       </div>
     </div>
   );
